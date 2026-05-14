@@ -60,7 +60,7 @@ L2-Normalized Embedding [768-dim]
 | Baseline | NDCG@3 | NDCG@5 | NDCG@10 | MRR@10 |
 |---|---|---|---|---|
 | vs PhoBERT | **+59.3%** | **+46.8%** | **+42.0%** | **+52.2%** |
-| vs DEk21 (previous SOTA) | **+18.3%** | **+14.9%** | **+10.7%** | **+17.3%** |
+| vs DEk21 | **+18.3%** | **+14.9%** | **+10.7%** | **+17.3%** |
 
 ---
 
@@ -216,5 +216,4 @@ MIT License — see [LICENSE](LICENSE) file for details.
 ## Acknowledgments
 
 - `bkai-foundation-models/vietnamese-bi-encoder` — backbone bi-encoder
-- `huyydangg/DEk21_hcmute_embedding` — baseline comparison (previous SOTA)
-- `vinai/phobert-base-v2` — used in cross-encoder re-ranker
+- `huyydangg/DEk21_hcmute_embedding` — baseline comparison - `vinai/phobert-base-v2` — used in cross-encoder re-ranker
