@@ -49,17 +49,18 @@ L2-Normalized Embedding [768-dim]
 
 | Model | NDCG@3 | NDCG@5 | NDCG@10 | MRR@3 | MRR@5 | MRR@10 |
 |---|---|---|---|---|---|---|
-| **BM25** (bm25) | 0.5164 | 0.5628 | 0.5718 | 0.5016 | 0.5290 | 0.5354 |
-| **PhoBERT-base-v2** (dense) | 0.4803 | 0.5305 | 0.5738 | 0.4503 | 0.4792 | 0.4961 |
-| **DEk21** (dense) | 0.6651 | 0.6907 | 0.7286 | 0.6394 | 0.6553 | 0.6734 |
-| **TELEN** (dense) | **0.8878** | **0.9097** | **0.9132** | **0.8686** | **0.8782** | **0.8782** |
+| **BM25** (lexical) | 0.6753 | 0.7173 | 0.7250 | 0.6683 | 0.6928 | 0.6990 |
+| **PhoBERT-base-v2** (dense) | 0.5866 | 0.6360 | 0.6505 | 0.5657 | 0.5970 | 0.6059 |
+| **DEk21** (dense) | 0.7900 | 0.8127 | 0.8344 | 0.7660 | 0.7785 | 0.7865 |
+| **TELEN** (dense) | 0.9036 | 0.9138 | 0.9132 | 0.8830 | 0.8878 | 0.8878 |
+| **TELEN + CE re-rank** (dense) | **0.9346** | **0.9339** | **0.9238** | **0.9199** | **0.9223** | **0.9223** |
 
 ### Relative Improvement
 
-| Baseline | NDCG@3 | NDCG@10 | MRR@10 |
-|---|---|---|---|
-| vs PhoBERT (dense) | **+84.9%** | **+59.2%** | **+77.1%** |
-| vs DEk21 (dense) | **+33.5%** | **+25.3%** | **+30.4%** |
+| Baseline | NDCG@3 | NDCG@5 | NDCG@10 | MRR@10 |
+|---|---|---|---|---|
+| vs PhoBERT | **+59.3%** | **+46.8%** | **+42.0%** | **+52.2%** |
+| vs DEk21 (previous SOTA) | **+18.3%** | **+14.9%** | **+10.7%** | **+17.3%** |
 
 ---
 
@@ -100,14 +101,18 @@ results = model.retrieve(texts[0], corpus, top_k=10)
 # Train TELEN from scratch
 python train.py
 
-# Train cross-encoder re-ranker (optional, for extra +2-3% gain)
+# Train cross-encoder re-ranker (optional, boosts MRR ~4%)
 python train_ce.py
 ```
 
 ### Evaluation
 
 ```bash
+# Full benchmark (TELEN vs BM25/PhoBERT/DEk21)
 python eval.py
+
+# TELEN + Cross-encoder re-ranking (MRR-optimized)
+python eval_rerank.py
 ```
 
 ---

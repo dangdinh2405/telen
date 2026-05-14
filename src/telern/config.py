@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List
 
-ROOT = Path("E:/law-embedding")
+ROOT = Path(__file__).parent.parent.parent  # repo root
 DATA_DIR = ROOT / "dataset"
 CHECKPOINT_DIR = ROOT / "data" / "checkpoints" / "telen"
 
@@ -28,10 +28,10 @@ class GraphConfig:
 @dataclass
 class HyperNetworkConfig:
     """HyperNetwork that generates projection weights from legal state."""
-    adaptation_rank: int = 64  # Low-rank adaptation
+    adaptation_rank: int = 16  # Low-rank adaptation (reduced to prevent overfitting)
     hn_hidden_dim: int = 512
     hn_layers: int = 3
-    dropout: float = 0.1
+    dropout: float = 0.2
     # What the HyperNetwork outputs
     output_shift: bool = True       # ΔW for projection
     output_bias: bool = True        # Δb for projection
@@ -42,7 +42,7 @@ class HyperNetworkConfig:
 @dataclass
 class MetaTrainingConfig:
     """Meta-learning training configuration."""
-    meta_lr: float = 3e-4
+    meta_lr: float = 1e-4
     inner_lr: float = 5e-3
     meta_batch_size: int = 4        # episodes per meta-update
     n_query: int = 32               # query articles per episode

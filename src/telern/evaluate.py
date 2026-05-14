@@ -31,7 +31,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import AutoModel, AutoTokenizer
 
 from .config import TELENConfig, DATA_DIR
-from .model import TELEN, create_telen
+from .model import TELEN, create_model as create_telen
 from ..data import load_raw_data, extract_metadata, clean_data
 
 
@@ -296,7 +296,7 @@ class FrozenPhoBERT:
             batch = texts[i:i + batch_size]
             encoded = self.tokenizer(
                 batch, padding=True, truncation=True,
-                max_length=480, return_tensors="pt",
+                max_length=256, return_tensors="pt",
             )
             input_ids = encoded["input_ids"].to(self.device)
             attention_mask = encoded["attention_mask"].to(self.device)

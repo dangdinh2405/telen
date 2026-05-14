@@ -194,11 +194,11 @@ def validate(model, articles_by_law, laws_by_year, val_years, config):
                 sv, config.meta.temperature).item())
     return sum(losses)/max(len(losses),1)
 
-def meta_train(model, articles_by_law, laws_by_year, train_years, val_years, config, epochs=50, patience=10):
+def meta_train(model, articles_by_law, laws_by_year, train_years, val_years, config, epochs=50, patience=15):
     trainable = (list(model.hypernetwork.parameters()) + list(model.state_encoder.parameters()) +
                  list(model.base_projection.parameters()) + [model.attn_query])
     opt = torch.optim.AdamW(trainable, lr=config.meta.meta_lr, weight_decay=1e-4)
-    sched = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(opt, T_0=10, T_mult=2)
+    sched = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.5, patience=5, min_lr=1e-6)
 
     os.makedirs(config.output_dir, exist_ok=True)
     best_val, patience_ctr = float("inf"), 0
@@ -227,10 +227,10 @@ def meta_train(model, articles_by_law, laws_by_year, train_years, val_years, con
 
         avg = total_loss / max(steps, 1)
         print(f"  Epoch {epoch+1} avg loss: {avg:.4f}")
-        sched.step()
 
         vl = validate(model, articles_by_law, laws_by_year, val_years, config)
         print(f"  Val loss: {vl:.4f}")
+        sched.step(vl)
 
         if vl < best_val:
             best_val, patience_ctr = vl, 0
@@ -285,7 +285,7 @@ def main():
     print("\n" + "=" * 60)
     print("Stage 2: Meta-Training")
     print("=" * 60)
-    model = meta_train(model, articles_by_law, laws_by_year, train_years, val_years, config, epochs=50, patience=10)
+    model = meta_train(model, articles_by_law, laws_by_year, train_years, val_years, config, epochs=50, patience=15)
 
     print(f"\nDone! Model saved to: {config.output_dir}/telen_best.pt")
 

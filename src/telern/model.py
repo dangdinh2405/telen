@@ -57,7 +57,7 @@ class TELEN(nn.Module):
             p.requires_grad = False
 
         # Projection
-        self.projection = nn.Sequential(nn.Linear(d, d), nn.Tanh())
+        self.base_projection = nn.Sequential(nn.Linear(d, d), nn.Tanh())
         self.proj_norm = nn.LayerNorm(d)
         self.attn_query = nn.Parameter(torch.randn(d))
 
@@ -86,7 +86,7 @@ class TELEN(nn.Module):
         return self.state_encoder(refined)
 
     def adapt_embedding(self, raw, state_vec):
-        base = self.projection(raw)
+        base = self.base_projection(raw)
         hn = self.hypernetwork(state_vec)
         shift = raw @ hn["shift_matrix"].T + hn["bias"]
         mean = F.normalize(self.proj_norm(base + shift), p=2, dim=1)
