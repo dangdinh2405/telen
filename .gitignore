@@ -1,3 +1,6 @@
 /data
 **/__pycache__
 /dataset
+.pytest_cache
+/publish
+hf.py
